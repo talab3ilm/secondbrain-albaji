@@ -1,0 +1,16 @@
+# Obsidian : état de l'interface propre à chaque machine
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.trash/
+
+# Aucun média dans le vault
+*.flac
+*.wav
+*.mp3
+*.m4a
+*.pdf.bak
+
+# Divers
+.DS_Store
+Thumbs.db
+__pycache__/
