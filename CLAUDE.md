@@ -167,9 +167,12 @@ Claude Code, et écrivent dans `raw/`. Claude ne modifie pas leur sortie.
   dans `../audio/`, ignoré par git.
 - `meta.md` est créé par le pipeline, pas par Claude. Le champ `validated` passe à `true`
   quand l'utilisateur dépose `texte-ok.md`.
-- Les livres arrivent dans `raw/pdfs/<catégorie>/<ouvrage>/` via `../txt_to_md.py` (texte
-  aljam3/turath, pages séparées par `PAGE_SEPARATOR`) ou `../pdf_to_md.py` (scan : OCR
-  marker-pdf + texte aljam3 + réconciliation par le modèle local). Les notes de bas de page
+- Les livres arrivent dans `raw/pdfs/<catégorie>/<ouvrage>/`. Voie principale :
+  `../turath_to_md.py` (texte saisi de turath.io + table des matières + pagination de
+  l'imprimé ; tashkeel de l'édition et notes du محقق reportés depuis le TXT aljam3 de la même
+  édition, par alignement mot à mot). Voies de repli : `../txt_to_md.py` (TXT aljam3 seul) ou
+  `../pdf_to_md.py` (scan : OCR marker-pdf + texte aljam3 + réconciliation par le modèle local)
+  quand le livre n'est pas sur turath. Les notes de bas de page
   vont dans un fichier séparé par tome, reliées depuis le texte par
   `[[<ouvrage> - الحواشي - جN#ص P|(n)]]`, et une page `الحواشي.md` les centralise. Convention
   `-ok.md` identique aux cours.
