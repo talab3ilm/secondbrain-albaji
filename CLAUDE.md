@@ -23,8 +23,15 @@ secondBrain/
 │   │       ├── meta.md         # frontmatter : url, id, titre, chaîne, intervenant, date, durée, modèle, validated
 │   │       ├── transcript.md   # transcription horodatée (sortie de transcribe.py), avec tashkeel
 │   │       ├── texte.md        # texte continu sans horodatage (sortie de md_to_text.py)
-│   │       └── texte-ok.md     # copie de texte.md relue et corrigée par l'utilisateur = feu vert pour /ingest
-│   └── pdfs/               # un dossier par ouvrage : "<slug>/" avec l'original, sa conversion .md et "<slug>-ok.md"
+│   │       ├── texte-ok.md     # copie de texte.md relue et corrigée par l'utilisateur = feu vert pour /ingest
+│   │       └── brouillon.md    # brouillon de page de leçon par le modèle local (draft_lesson.py), à partir de texte-ok.md
+│   └── pdfs/               # livres : un dossier par catégorie (matière), puis un par ouvrage
+│       └── <catégorie>/<ouvrage>/
+│           ├── <ouvrage> - ج1.md               # texte du tome 1, titres hiérarchisés, marqueurs <!-- ص N -->
+│           ├── <ouvrage> - الحواشي - ج1.md      # notes de bas de page du tome 1, une section "## ص N" par page
+│           ├── الحواشي.md                       # page centrale : [[liens]] vers les fichiers de notes de l'ouvrage
+│           ├── <ouvrage> - ج1-ok.md            # version relue par l'utilisateur = feu vert pour /ingest
+│           └── *.pdf, *.txt                     # originaux (hors git pour les PDF)
 ├── wiki/                   # DOMAINE DE CLAUDE : pages compilées, reliées par [[wiki-links]]
 │   ├── index.md            # catalogue maître de toutes les pages, par catégorie
 │   ├── log.md              # journal append-only (ingest, lint, requêtes, notes)
@@ -160,17 +167,21 @@ Claude Code, et écrivent dans `raw/`. Claude ne modifie pas leur sortie.
   dans `../audio/`, ignoré par git.
 - `meta.md` est créé par le pipeline, pas par Claude. Le champ `validated` passe à `true`
   quand l'utilisateur dépose `texte-ok.md`.
-- Les PDF et textes de bibliothèques en ligne arrivent dans `raw/pdfs/<slug>/` avec le
-  fichier d'origine et sa conversion `.md` (outil : marker-pdf avec OCR Surya pour les
-  scans ; pour turath.io et aljam3.com, récupération du texte directement). Convention
-  `-ok.md` identique.
-- À venir : un fichier `../sources.txt` listant les URL YouTube (vidéos, playlists) et les
-  URL de livres à traiter ; un script lit ce fichier, traite ce qui est nouveau et dépose le
-  résultat dans `raw/`. Pas de routine cloud : la transcription exige le GPU local.
-- Modèle local (Ollama, `http://localhost:11434`, `qwen3.5:27b`, `num_ctx` ≥ 32768) : utilisable
-  pour produire un **brouillon** de page de leçon à partir de `texte-ok.md`. Le brouillon est
-  ensuite relu par Claude lors de `/ingest`, qui garde la responsabilité des liens, de
-  l'index et du log. Un brouillon ne va jamais directement dans `wiki/` sans relecture.
+- Les livres arrivent dans `raw/pdfs/<catégorie>/<ouvrage>/` via `../txt_to_md.py` (texte
+  aljam3/turath, pages séparées par `PAGE_SEPARATOR`) ou `../pdf_to_md.py` (scan : OCR
+  marker-pdf + texte aljam3 + réconciliation par le modèle local). Les notes de bas de page
+  vont dans un fichier séparé par tome, reliées depuis le texte par
+  `[[<ouvrage> - الحواشي - جN#ص P|(n)]]`, et une page `الحواشي.md` les centralise. Convention
+  `-ok.md` identique aux cours.
+- `../sources.txt` liste les URL (vidéos, playlists, chaînes YouTube, livres) ; `../pull_sources.py`
+  traite ce qui est nouveau, tient le registre `../sources.done.tsv` et dépose dans `raw/`.
+  Pas de routine cloud : la transcription exige le GPU local.
+- **Deux étages pour l'ingestion** (décision du 2026-10-09) : `../draft_lesson.py` fait écrire par
+  le modèle local (Ollama, `qwen3.5:27b`) un `brouillon.md` à partir de `texte-ok.md` (résumé,
+  matière, plan, concepts, أعلام, فوائد, passages douteux, résumé français). `/ingest` part de
+  ce brouillon et ne relit le texte complet que pour vérifier ou citer. Claude garde la
+  responsabilité des pages concepts/personnes, des liens, de l'index et du log. Un brouillon
+  ne va jamais tel quel dans `wiki/`.
 
 ## 6. Slash commands (comportement attendu)
 

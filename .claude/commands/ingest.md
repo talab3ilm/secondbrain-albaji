@@ -15,7 +15,7 @@ Tu compiles des cours arabes dans le wiki. Relis d'abord `CLAUDE.md` (convention
 
 ## Pour chaque source
 
-1. Lis `meta.md` (métadonnées), puis le fichier `-ok.md` en entier. Pour les citations horodatées, cherche les passages dans `transcript.md` (segments `**[début -> fin]**`).
+1. Lis `meta.md` (métadonnées). S'il existe un `brouillon.md` (produit par le modèle local à partir du `-ok.md`), pars de lui : vérifie chaque affirmation que tu reprends en la retrouvant dans le `-ok.md` (recherche ciblée, pas de relecture intégrale sauf si le brouillon est incohérent ou absent). Sans brouillon, lis le `-ok.md` en entier. Pour les citations horodatées, cherche les passages dans `transcript.md` (segments `**[début -> fin]**`). Pour un livre, les notes de bas de page sont dans `<ouvrage> - الحواشي - جN.md`.
 2. Écris ou mets à jour la page `wiki/lessons/<titre>.md` (vidéo) ou `wiki/books/<titre>.md` (PDF) selon la structure imposée par `CLAUDE.md`, avec le frontmatter complet et le champ `sources` pointant vers les fichiers de `raw/` utilisés.
 3. Pour chaque notion, terme ou مسألة important : crée `wiki/concepts/<nom>.md` ou enrichis la page existante (ajoute l'attribution et la source ; si la nouvelle source contredit la page, ajoute une section `## الخلاف`). Ne crée pas de page pour une notion seulement mentionnée en passant.
 4. Enseignant et savants cités : page dans `wiki/people/`. Ouvrages cités : page dans `wiki/books/` (une courte fiche suffit si l'ouvrage n'est pas la source elle-même).
